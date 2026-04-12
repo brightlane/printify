@@ -1,0 +1,35 @@
+import requests
+import json
+
+def notify_bing(new_urls):
+    # Your unique IndexNow Key (Generate this in Bing Webmaster Tools)
+    # It's usually a 32-character hex string
+    API_KEY = "YOUR_INDEXNOW_KEY_HERE" 
+    HOST = "your-primary-domain.com" # Or your GitHub Pages URL
+    
+    endpoint = "https://www.bing.com/indexnow"
+    
+    data = {
+        "host": HOST,
+        "key": API_KEY,
+        "keyLocation": f"https://{HOST}/{API_KEY}.txt", # You must host the key file
+        "urlList": new_urls
+    }
+    
+    headers = {'Content-Type': 'application/json; charset=utf-8'}
+    
+    response = requests.post(endpoint, data=json.dumps(data), headers=headers)
+    
+    if response.status_code == 200:
+        print(f"Success! {len(new_urls)} URLs submitted to Bing.")
+    else:
+        print(f"Error: {response.status_code}")
+
+# Example usage for your 10 new daily sites
+new_sites = [
+    "https://brightlane.github.io/site-1/index.html",
+    "https://brightlane.github.io/site-2/index.html",
+    # ... up to 10
+]
+
+notify_bing(new_sites)
