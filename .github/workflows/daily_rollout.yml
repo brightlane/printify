@@ -1,31 +1,32 @@
-name: Daily Printify SEO Rollout
+name: Daily SEO Auto-Pilot
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs at Midnight UTC every day
-  workflow_dispatch: # Allows you to run it manually for testing
+    - cron: '0 0 * * *' # Every night at midnight
+  workflow_dispatch:
 
 jobs:
-  build_and_deploy:
+  automate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-
-      - name: Install Dependencies
-        run: pip install requests
-
-      - name: Run Generator Script
+          
+      - name: Install Requirements
+        run: pip install pandas requests
+        
+      - name: Run Keyword Engine
         env:
-          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }} # Store your Bing key in GitHub Secrets
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
         run: python generator.py
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./output # The folder where your script saves the HTML
+        
+      - name: Commit Progress
+        run: |
+          git config --global user.name 'SEO-Bot'
+          git config --global user.email 'bot@brightlane.dev'
+          git add keywords.csv sites/
+          git commit -m "Automated Rollout: 10 New Sites"
+          git push
