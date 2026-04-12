@@ -1,35 +1,3 @@
-keyword,status
-custom all over print hoodie,pending
-personalized ceramic mug 11oz,pending
-vintage retro streetwear tee,pending
-... (1,000 more rows)
-import pandas as pd
-
-# 1. Define high-intent modifiers
-modifiers = ["best", "custom", "personalized", "bulk", "affordable", "high quality", "unique", "funny", "gift for", "2026"]
-
-# 2. Define top Printify products (derived from 2026 trending data)
-products = [
-    "unisex hoodie", "gildan 18000 sweatshirt", "ceramic mug 11oz", "matte canvas", 
-    "tough phone case", "scented candle", "plush blanket", "tote bag", 
-    "kiss cut stickers", "baby onesie", "pet bandana", "acrylic plaque",
-    "photo puzzle", "stainless steel tumbler", "aop desk mat", "yoga mat"
-]
-
-# 3. Define Niche modifiers
-niches = ["dog lovers", "gamers", "programmers", "teachers", "nurses", "minimalist", "retro 80s", "boho", "wedding", "fitness"]
-
-# 4. Generate the List
-keyword_list = []
-for p in products:
-    for m in modifiers:
-        for n in niches:
-            keyword_list.append(f"{m} {n} {p}")
-
-# Cap it at 1000 and save
-df = pd.DataFrame(keyword_list[:1000], columns=['keyword'])
-df['status'] = 'pending'
-df['date_launched'] = ''
-df.to_csv('keywords.csv', index=False)
-
-print("1,000 High-Intent Keywords Generated in keywords.csv")
+keyword,status,date_launched
+custom hoodie,pending,
+personalized mug,pending,
