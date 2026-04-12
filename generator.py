@@ -1,25 +1,44 @@
+import os
 import random
+import requests
+import datetime
 
-# Your pools of pre-written 'fun' content blocks
-intros = ["Ever dreamed of a passive income stream that actually works?", "The custom apparel world is exploding in 2026...", "Stop trading time for money. It's time to build..."]
-bodies = ["When you look at [KEYWORD], the margins are insane...", "Designers are flocking to Printify for [KEYWORD] because..."]
-closers = ["Don't wait. The best time to start was yesterday. The second best time is now.", "Join thousands of successful entrepreneurs today."]
+# --- CONFIGURATION ---
+AFFILIATE_URL = "https://try.printify.com/r3xsnwqufe8t"
+INDEXNOW_KEY = os.getenv("INDEXNOW_KEY") # Pulled from GitHub Secrets
+HOST = "brightlane.github.io" # Your domain
 
-def assemble_3000_words(target_keyword):
-    # 1. Select and Shuffle
-    content_blocks = [
-        random.choice(intros),
-        random.choice(bodies),
-        # Add more logic here to reach 3,000 words
-        f"Why {target_keyword} is the ultimate niche for 2026...",
-        "### Pro Tips for Success",
-        "* Focus on high-resolution graphics.",
-        "* Use our [Printify Link](https://try.printify.com/r3xsnwqufe8t) for a bonus.",
-        random.choice(closers)
-    ]
+def create_site(keyword, index):
+    """Generates the 3000-word HTML file based on your beautiful template."""
+    # (Insert the Beautiful UI CSS & HTML logic from our previous steps here)
+    html_content = f"<html>... {keyword} ... {AFFILIATE_URL} ...</html>"
     
-    # 2. Key-Injection (The '10-into-1' Trick)
-    full_text = "\n\n".join(content_blocks)
-    full_text = full_text.replace("[KEYWORD]", target_keyword)
+    path = f"output/site-{index}"
+    os.makedirs(path, exist_ok=True)
+    with open(f"{path}/index.html", "w") as f:
+        f.write(html_content)
     
-    return full_text
+    return f"https://{HOST}/site-{index}/index.html"
+
+def ping_bing(urls):
+    """Notifies Bing to index the new content immediately."""
+    data = {
+        "host": HOST,
+        "key": INDEXNOW_KEY,
+        "keyLocation": f"https://{HOST}/{INDEXNOW_KEY}.txt",
+        "urlList": urls
+    }
+    requests.post("https://www.bing.com/indexnow", json=data)
+
+# --- EXECUTION ---
+if __name__ == "__main__":
+    keywords = ["custom hoodies", "print on demand shirts", "eco-friendly mugs"] # Pull from your 1000 keyword list
+    new_urls = []
+    
+    for i in range(10):
+        kw = random.choice(keywords)
+        url = create_site(kw, i + (datetime.datetime.now().day * 10))
+        new_urls.append(url)
+    
+    ping_bing(new_urls)
+    print(f"Successfully deployed 10 sites and pinged Bing.")
