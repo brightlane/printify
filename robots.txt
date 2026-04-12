@@ -1,0 +1,12 @@
+User-agent: bingbot
+Allow: /
+Allow: /sites/
+Disallow: /generator.py
+Disallow: /keywords.csv
+Disallow: /.github/
+
+User-agent: *
+Allow: /
+
+# Direct Bing to your dynamic sitemap
+Sitemap: https://brightlane.github.io/sitemap.xml
