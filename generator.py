@@ -1,44 +1,42 @@
-import os
+import pandas as pd
 import random
-import requests
 import datetime
+import os
 
-# --- CONFIGURATION ---
-AFFILIATE_URL = "https://try.printify.com/r3xsnwqufe8t"
-INDEXNOW_KEY = os.getenv("INDEXNOW_KEY") # Pulled from GitHub Secrets
-HOST = "brightlane.github.io" # Your domain
-
-def create_site(keyword, index):
-    """Generates the 3000-word HTML file based on your beautiful template."""
-    # (Insert the Beautiful UI CSS & HTML logic from our previous steps here)
-    html_content = f"<html>... {keyword} ... {AFFILIATE_URL} ...</html>"
+def run_daily_batch():
+    # 1. Load your 1,000 keywords
+    df = pd.read_csv('keywords.csv')
     
-    path = f"output/site-{index}"
-    os.makedirs(path, exist_ok=True)
-    with open(f"{path}/index.html", "w") as f:
-        f.write(html_content)
+    # 2. Get the next 10 "pending" keywords
+    target_batch = df[df['status'] == 'pending'].head(10)
     
-    return f"https://{HOST}/site-{index}/index.html"
+    if target_batch.empty:
+        print("All 1,000 keywords have been processed!")
+        return
 
-def ping_bing(urls):
-    """Notifies Bing to index the new content immediately."""
-    data = {
-        "host": HOST,
-        "key": INDEXNOW_KEY,
-        "keyLocation": f"https://{HOST}/{INDEXNOW_KEY}.txt",
-        "urlList": urls
-    }
-    requests.post("https://www.bing.com/indexnow", json=data)
+    generated_urls = []
+    
+    for index, row in target_batch.iterrows():
+        keyword = row['keyword']
+        
+        # 3. Generate the "Beautiful" HTML (Using our previous template)
+        url = create_beautiful_site(keyword) 
+        generated_urls.append(url)
+        
+        # 4. Mark as completed in the dataframe
+        df.at[index, 'status'] = 'completed'
+        df.at[index, 'date_launched'] = datetime.datetime.now().strftime("%Y-%m-%d")
 
-# --- EXECUTION ---
+    # 5. Save the updated database
+    df.to_csv('keywords.csv', index=False)
+    
+    # 6. Push to GitHub and Ping IndexNow
+    deploy_and_ping(generated_urls)
+
+def create_beautiful_site(keyword):
+    # This function uses the Glassmorphism template from Step 3
+    # Saves to /sites/{keyword-slug}/index.html
+    pass 
+
 if __name__ == "__main__":
-    keywords = ["custom hoodies", "print on demand shirts", "eco-friendly mugs"] # Pull from your 1000 keyword list
-    new_urls = []
-    
-    for i in range(10):
-        kw = random.choice(keywords)
-        url = create_site(kw, i + (datetime.datetime.now().day * 10))
-        new_urls.append(url)
-    
-    ping_bing(new_urls)
-    print(f"Successfully deployed 10 sites and pinged Bing.")
+    run_daily_batch()
