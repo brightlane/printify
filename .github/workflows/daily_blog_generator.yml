@@ -2,26 +2,33 @@ name: Daily Blog Generator
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # This will trigger the workflow every day at 9:00 AM UTC
-  workflow_dispatch:  # This allows the workflow to be manually triggered
+    - cron: '0 9 * * *'  # This triggers the workflow every day at 9 AM (UTC)
+  workflow_dispatch:  # Allows manual trigger from the GitHub UI
 
 jobs:
   generate-blog:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      # Set up Python environment
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
 
-    - name: Install dependencies
-      run: |
-        pip install openai schedule  # Install necessary dependencies
+      # Install dependencies (such as OpenAI package)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openai schedule
 
-    - name: Run Daily Blog Generator
-      run: |
-        python path/to/your/script/daily_blog_generator.py  # Replace with the path to your Python script
+      # Run the Daily Blog Generator Python script
+      - name: Run Daily Blog Generator
+        run: |
+          python path/to/your/script/daily_blog_generator.py  # Replace with correct script path
+
+      # Optionally, you can add a step to push the generated blog to your CMS here (e.g., WordPress, Ghost, etc.)
