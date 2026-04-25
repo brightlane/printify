@@ -3,6 +3,7 @@ name: Daily Blog Generator
 on:
   schedule:
     - cron: '0 9 * * *'  # This will trigger the workflow every day at 9:00 AM UTC
+  workflow_dispatch:  # This allows the workflow to be manually triggered
 
 jobs:
   generate-blog:
