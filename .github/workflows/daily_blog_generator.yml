@@ -29,6 +29,6 @@ jobs:
       # Run the Daily Blog Generator Python script
       - name: Run Daily Blog Generator
         run: |
-          python path/to/your/script/daily_blog_generator.py  # Replace with correct script path
+          python daily_blog_generator.py  # Update the path as needed
 
       # Optionally, you can add a step to push the generated blog to your CMS here (e.g., WordPress, Ghost, etc.)
